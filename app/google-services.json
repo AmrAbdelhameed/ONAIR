@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "781629527964",
+    "firebase_url": "https://onair-e9ec9.firebaseio.com",
+    "project_id": "onair-e9ec9",
+    "storage_bucket": "onair-e9ec9.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:781629527964:android:2ecee750f1fe3a51",
+        "android_client_info": {
+          "package_name": "com.example.amr.onair"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "781629527964-rajh5aai1aork16ba7haklrc7a82gnkf.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.amr.onair",
+            "certificate_hash": "5aa13d4c413ac009a672de9c0bf9ba2973a0f8ca"
+          }
+        },
+        {
+          "client_id": "781629527964-vrp29puoucccrq517q4or5a4esrnj1no.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB4LxdXZpciaVONtovW1PQOse6jeAFE12A"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "781629527964-vrp29puoucccrq517q4or5a4esrnj1no.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
