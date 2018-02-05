@@ -18,7 +18,7 @@ import com.squareup.picasso.Picasso;
 
 public class ProfileActivity extends AppCompatActivity {
 
-    ImageView ic_message2;
+    ImageView ic_message, ic_message2;
     ConstraintLayout Cons, Cons1;
     de.hdodenhof.circleimageview.CircleImageView image;
     TextView name, txtPhone, txtEmail, txtNationalID, txtDate, department;
@@ -35,6 +35,7 @@ public class ProfileActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
 
+        ic_message = findViewById(R.id.ic_message);
         ic_message2 = findViewById(R.id.ic_message2);
         Cons = findViewById(R.id.Cons);
         Cons1 = findViewById(R.id.Cons1);
@@ -104,6 +105,23 @@ public class ProfileActivity extends AppCompatActivity {
                 AlertDialog d = builder.create();
                 d.setTitle("Are you sure");
                 d.show();
+            }
+        });
+
+        ic_message.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent i = new Intent(ProfileActivity.this, SendMessageActivity.class);
+
+                Bundle b = new Bundle();
+                if (_staff)
+                    b.putSerializable("sampleObject", staff);
+                else
+                    b.putSerializable("sampleObject", client);
+                b.putBoolean("staff", _staff);
+                i.putExtras(b);
+
+                startActivity(i);
             }
         });
 

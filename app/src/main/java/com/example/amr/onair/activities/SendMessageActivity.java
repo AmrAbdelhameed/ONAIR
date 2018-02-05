@@ -1,9 +1,9 @@
 package com.example.amr.onair.activities;
 
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.telephony.SmsManager;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -14,29 +14,24 @@ import com.example.amr.onair.R;
 import com.example.amr.onair.models.Client;
 import com.example.amr.onair.models.Staff;
 
-import java.util.ArrayList;
-import java.util.List;
+public class SendMessageActivity extends AppCompatActivity {
 
-public class SendMailActivity extends AppCompatActivity {
-
-    EditText textSubject, textMessage;
+    EditText textMessage;
     TextView textto;
     Button bTnSend;
     boolean _staff;
     Staff staff;
     Client client;
-    String _Email;
-    List<String> stockList;
+    String _Phone;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_send_mail);
+        setContentView(R.layout.activity_send_message);
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
 
-        textSubject = findViewById(R.id.textSubject);
         textto = findViewById(R.id.textto);
         textMessage = findViewById(R.id.textMessage);
         bTnSend = findViewById(R.id.bTnSend);
@@ -49,51 +44,38 @@ public class SendMailActivity extends AppCompatActivity {
         if (_staff) {
             staff = (Staff) sentBundle.getSerializable("sampleObject");
             assert staff != null;
-            _Email = staff.getEmail();
+            _Phone = staff.getPhone();
         } else {
             client = (Client) sentBundle.getSerializable("sampleObject");
             assert client != null;
-            _Email = client.getEmail();
+            _Phone = client.getPhone();
         }
-        setTitle("Send with email");
-        textto.setText("To : " + _Email);
-
-        stockList = new ArrayList<>();
-        stockList.add(_Email);
+        setTitle("Send with SMS");
+        textto.setText("To : " + _Phone);
 
         bTnSend.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (textSubject.getText().toString().isEmpty()) {
-                    textSubject.setError("Please Enter Subject");
-                } else if (textMessage.getText().toString().isEmpty()) {
+                if (textMessage.getText().toString().isEmpty()) {
                     textMessage.setError("Please Enter Message");
                 } else {
-                    sendEmail(stockList, textSubject.getText().toString(), textMessage.getText().toString());
+                    sendSMS(_Phone, textMessage.getText().toString());
                 }
             }
         });
     }
 
-    protected void sendEmail(List<String> stockList, String subject, String msg) {
-
-        String[] TO = new String[stockList.size()];
-        TO = stockList.toArray(TO);
-
-        Intent emailIntent = new Intent(Intent.ACTION_SEND);
-
-        emailIntent.setData(Uri.parse("mailto:"));
-        emailIntent.setType("text/plain");
-        emailIntent.putExtra(Intent.EXTRA_EMAIL, TO);
-        emailIntent.putExtra(Intent.EXTRA_SUBJECT, subject);
-        emailIntent.putExtra(Intent.EXTRA_TEXT, msg);
-
+    protected void sendSMS(String phone, String msg) {
         try {
-            startActivity(Intent.createChooser(emailIntent, "Send mail..."));
-            finish();
-            Toast.makeText(this, "Finished sending email...", Toast.LENGTH_SHORT).show();
-        } catch (android.content.ActivityNotFoundException ex) {
-            Toast.makeText(SendMailActivity.this, "There is no email client installed.", Toast.LENGTH_SHORT).show();
+            SmsManager smsManager = SmsManager.getDefault();
+            smsManager.sendTextMessage(phone, null, msg, null, null);
+            Toast.makeText(getApplicationContext(), "SMS sent.",
+                    Toast.LENGTH_LONG).show();
+        } catch (Exception e) {
+            Toast.makeText(getApplicationContext(),
+                    "SMS failed, please try again later!",
+                    Toast.LENGTH_LONG).show();
+            e.printStackTrace();
         }
     }
 

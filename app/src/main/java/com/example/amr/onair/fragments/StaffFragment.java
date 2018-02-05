@@ -5,6 +5,7 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
@@ -31,6 +32,7 @@ import android.widget.Toast;
 import com.example.amr.onair.Others.MyDividerItemDecoration;
 import com.example.amr.onair.R;
 import com.example.amr.onair.activities.SendMailGroupActivity;
+import com.example.amr.onair.activities.SendMessageGroupActivity;
 import com.example.amr.onair.adapters.StaffAdapter;
 import com.example.amr.onair.models.Staff;
 import com.google.firebase.database.DataSnapshot;
@@ -39,7 +41,9 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -63,6 +67,7 @@ public class StaffFragment extends Fragment {
     String DepartmenttypeString;
     boolean checkVisit = false;
     Gson gson;
+    String CacheDataStaff;
 
     public StaffFragment() {
         // Required empty public constructor
@@ -101,6 +106,7 @@ public class StaffFragment extends Fragment {
         pdialog.setMessage("Loading. Please wait...");
         pdialog.show();
 
+        staffList = new ArrayList<>();
         staffListFilter = new ArrayList<>();
 
         text_search = view.findViewById(R.id.text_search);
@@ -108,9 +114,24 @@ public class StaffFragment extends Fragment {
 
         if (!hasInternetConnection(getActivity())) {
             Toast.makeText(getActivity(), "Connection Failed", Toast.LENGTH_LONG).show();
+
+            SharedPreferences sharedPreferences = getActivity().getSharedPreferences("sharedPreferencesName", Context.MODE_PRIVATE);
+            CacheDataStaff = sharedPreferences.getString("CacheDataStaff", "");
+
+            Type type = new TypeToken<List<Staff>>() {
+            }.getType();
+            staffList = gson.fromJson(CacheDataStaff, type);
+
+            staffAdapter = new StaffAdapter(getActivity(), staffList);
+            mLayoutManager = new GridLayoutManager(getActivity(), 1);
+            recycler_view.setLayoutManager(mLayoutManager);
+            recycler_view.addItemDecoration(new MyDividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL, 0));
+            recycler_view.setHasFixedSize(true);
+            recycler_view.setItemAnimator(new DefaultItemAnimator());
+            recycler_view.setAdapter(staffAdapter);
+
             pdialog.dismiss();
         } else {
-            staffList = new ArrayList<>();
             database = FirebaseDatabase.getInstance();
             databaseReference = database.getReference();
             databaseReference.child("users").child("staff").addValueEventListener(new ValueEventListener() {
@@ -133,6 +154,12 @@ public class StaffFragment extends Fragment {
                     recycler_view.setHasFixedSize(true);
                     recycler_view.setItemAnimator(new DefaultItemAnimator());
                     recycler_view.setAdapter(staffAdapter);
+
+                    CacheDataStaff = gson.toJson(staffList);
+                    SharedPreferences sharedPreferences = getActivity().getSharedPreferences("sharedPreferencesName", Context.MODE_PRIVATE);
+                    SharedPreferences.Editor editor = sharedPreferences.edit();
+                    editor.putString("CacheDataStaff", CacheDataStaff);
+                    editor.apply();
 
                     pdialog.dismiss();
                 }
@@ -230,24 +257,25 @@ public class StaffFragment extends Fragment {
                                     {"Create Group Chat", "Send with email", "Send with SMS"},
                             new DialogInterface.OnClickListener() {
                                 public void onClick(DialogInterface dialog, int which) {
-                                    // The 'which' argument contains the index position
-                                    // of the selected item
+                                    String staffListFilterString = gson.toJson(staffListFilter);
                                     switch (which) {
                                         case 0:
-                                            Toast.makeText(getActivity(), "clicked 1", Toast.LENGTH_SHORT).show();
                                             break;
                                         case 1:
-                                            String staffListFilterString = gson.toJson(staffListFilter);
-
-                                            Intent i = new Intent(getActivity(), SendMailGroupActivity.class);
-                                            Bundle b = new Bundle();
-                                            b.putString("ListFilterString", staffListFilterString);
-                                            b.putBoolean("staff", true);
-                                            i.putExtras(b);
-                                            startActivity(i);
+                                            Intent i2 = new Intent(getActivity(), SendMailGroupActivity.class);
+                                            Bundle b2 = new Bundle();
+                                            b2.putString("ListFilterString", staffListFilterString);
+                                            b2.putBoolean("staff", true);
+                                            i2.putExtras(b2);
+                                            startActivity(i2);
                                             break;
                                         case 2:
-                                            Toast.makeText(getActivity(), "clicked 3", Toast.LENGTH_SHORT).show();
+                                            Intent i3 = new Intent(getActivity(), SendMessageGroupActivity.class);
+                                            Bundle b3 = new Bundle();
+                                            b3.putString("ListFilterString", staffListFilterString);
+                                            b3.putBoolean("staff", true);
+                                            i3.putExtras(b3);
+                                            startActivity(i3);
                                             break;
                                     }
                                 }

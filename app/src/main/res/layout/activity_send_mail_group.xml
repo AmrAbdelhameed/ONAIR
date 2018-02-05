@@ -43,6 +43,24 @@
 
             <android.support.constraint.ConstraintLayout
                 android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/_8dp"
+                android:layout_marginEnd="@dimen/_8dp"
+                android:layout_marginTop="@dimen/_8dp">
+
+                <View
+                    android:layout_width="0dp"
+                    android:layout_height="@dimen/_1dp"
+                    android:background="@color/colorBlack"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+            </android.support.constraint.ConstraintLayout>
+
+            <android.support.constraint.ConstraintLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
                 <EditText

@@ -5,6 +5,7 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
@@ -28,15 +29,19 @@ import android.widget.Toast;
 import com.example.amr.onair.Others.MyDividerItemDecoration;
 import com.example.amr.onair.R;
 import com.example.amr.onair.activities.SendMailGroupActivity;
+import com.example.amr.onair.activities.SendMessageGroupActivity;
 import com.example.amr.onair.adapters.ClientsAdapter;
 import com.example.amr.onair.models.Client;
+import com.example.amr.onair.models.Staff;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -56,6 +61,7 @@ public class ClientsFragment extends Fragment {
     ProgressDialog pdialog;
     EditText text_search;
     Gson gson;
+    String CacheDataClient;
 
     public ClientsFragment() {
         // Required empty public constructor
@@ -86,6 +92,7 @@ public class ClientsFragment extends Fragment {
 
         setHasOptionsMenu(true);
 
+        clientList = new ArrayList<>();
         clientListFilter = new ArrayList<>();
         gson = new Gson();
 
@@ -100,9 +107,24 @@ public class ClientsFragment extends Fragment {
 
         if (!hasInternetConnection(getActivity())) {
             Toast.makeText(getActivity(), "Connection Failed", Toast.LENGTH_LONG).show();
+
+            SharedPreferences sharedPreferences = getActivity().getSharedPreferences("sharedPreferencesName", Context.MODE_PRIVATE);
+            CacheDataClient = sharedPreferences.getString("CacheDataClient", "");
+
+            Type type = new TypeToken<List<Client>>() {
+            }.getType();
+            clientList = gson.fromJson(CacheDataClient, type);
+
+            clientsAdapter = new ClientsAdapter(getActivity(), clientList);
+            mLayoutManager = new GridLayoutManager(getActivity(), 1);
+            recycler_view.setLayoutManager(mLayoutManager);
+            recycler_view.addItemDecoration(new MyDividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL, 0));
+            recycler_view.setHasFixedSize(true);
+            recycler_view.setItemAnimator(new DefaultItemAnimator());
+            recycler_view.setAdapter(clientsAdapter);
+
             pdialog.dismiss();
         } else {
-            clientList = new ArrayList<>();
             database = FirebaseDatabase.getInstance();
             databaseReference = database.getReference();
             databaseReference.child("users").child("clients").addValueEventListener(new ValueEventListener() {
@@ -125,6 +147,12 @@ public class ClientsFragment extends Fragment {
                     recycler_view.setHasFixedSize(true);
                     recycler_view.setItemAnimator(new DefaultItemAnimator());
                     recycler_view.setAdapter(clientsAdapter);
+
+                    CacheDataClient = gson.toJson(clientList);
+                    SharedPreferences sharedPreferences = getActivity().getSharedPreferences("sharedPreferencesName", Context.MODE_PRIVATE);
+                    SharedPreferences.Editor editor = sharedPreferences.edit();
+                    editor.putString("CacheDataClient", CacheDataClient);
+                    editor.apply();
 
                     pdialog.dismiss();
                 }
@@ -182,24 +210,25 @@ public class ClientsFragment extends Fragment {
                                     {"Create Group Chat", "Send with email", "Send with SMS"},
                             new DialogInterface.OnClickListener() {
                                 public void onClick(DialogInterface dialog, int which) {
-                                    // The 'which' argument contains the index position
-                                    // of the selected item
+                                    String staffListFilterString = gson.toJson(clientListFilter);
                                     switch (which) {
                                         case 0:
-                                            Toast.makeText(getActivity(), "clicked 1", Toast.LENGTH_SHORT).show();
                                             break;
                                         case 1:
-                                            String staffListFilterString = gson.toJson(clientListFilter);
-
-                                            Intent i = new Intent(getActivity(), SendMailGroupActivity.class);
-                                            Bundle b = new Bundle();
-                                            b.putString("ListFilterString", staffListFilterString);
-                                            b.putBoolean("staff", false);
-                                            i.putExtras(b);
-                                            startActivity(i);
+                                            Intent i2 = new Intent(getActivity(), SendMailGroupActivity.class);
+                                            Bundle b2 = new Bundle();
+                                            b2.putString("ListFilterString", staffListFilterString);
+                                            b2.putBoolean("staff", false);
+                                            i2.putExtras(b2);
+                                            startActivity(i2);
                                             break;
                                         case 2:
-                                            Toast.makeText(getActivity(), "clicked 3", Toast.LENGTH_SHORT).show();
+                                            Intent i3 = new Intent(getActivity(), SendMessageGroupActivity.class);
+                                            Bundle b3 = new Bundle();
+                                            b3.putString("ListFilterString", staffListFilterString);
+                                            b3.putBoolean("staff", false);
+                                            i3.putExtras(b3);
+                                            startActivity(i3);
                                             break;
                                     }
                                 }

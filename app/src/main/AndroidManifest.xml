@@ -8,6 +8,7 @@
     <uses-permission android:name="android.permission.STORAGE" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <uses-permission android:name="android.permission.SEND_SMS" />
 
     <application
         android:allowBackup="true"
@@ -48,6 +49,8 @@
         <activity
             android:name=".activities.SendMailGroupActivity"
             android:screenOrientation="portrait" />
+        <activity android:name=".activities.SendMessageActivity" />
+        <activity android:name=".activities.SendMessageGroupActivity"></activity>
     </application>
 
 </manifest>
