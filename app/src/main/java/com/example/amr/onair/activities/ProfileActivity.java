@@ -1,11 +1,14 @@
 package com.example.amr.onair.activities;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.constraint.ConstraintLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.amr.onair.R;
@@ -15,6 +18,7 @@ import com.squareup.picasso.Picasso;
 
 public class ProfileActivity extends AppCompatActivity {
 
+    ImageView ic_message2;
     ConstraintLayout Cons, Cons1;
     de.hdodenhof.circleimageview.CircleImageView image;
     TextView name, txtPhone, txtEmail, txtNationalID, txtDate, department;
@@ -31,6 +35,7 @@ public class ProfileActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
 
+        ic_message2 = findViewById(R.id.ic_message2);
         Cons = findViewById(R.id.Cons);
         Cons1 = findViewById(R.id.Cons1);
         image = findViewById(R.id.image);
@@ -85,7 +90,37 @@ public class ProfileActivity extends AppCompatActivity {
         txtPhone.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                startActivity(new Intent(Intent.ACTION_DIAL, Uri.fromParts("tel", _phone, null)));
+                AlertDialog.Builder builder = new AlertDialog.Builder(ProfileActivity.this);
+                builder.setMessage("Do you want to call " + _phone + " ?")
+                        .setPositiveButton("yes", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                startActivity(new Intent(Intent.ACTION_DIAL, Uri.fromParts("tel", _phone, null)));
+                            }
+                        }).setNegativeButton("no", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        // Nothing
+                    }
+                });
+                AlertDialog d = builder.create();
+                d.setTitle("Are you sure");
+                d.show();
+            }
+        });
+
+        ic_message2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent i = new Intent(ProfileActivity.this, SendMailActivity.class);
+
+                Bundle b = new Bundle();
+                if (_staff)
+                    b.putSerializable("sampleObject", staff);
+                else
+                    b.putSerializable("sampleObject", client);
+                b.putBoolean("staff", _staff);
+                i.putExtras(b);
+
+                startActivity(i);
             }
         });
     }

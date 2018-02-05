@@ -86,7 +86,7 @@ public class MainClientOrStaffActivity extends AppCompatActivity
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-//        getMenuInflater().inflate(R.menu.main_client_or_staff, menu);
+//        getMenuInflater().inflate(R.menu.edit_members, menu);
         return true;
     }
 

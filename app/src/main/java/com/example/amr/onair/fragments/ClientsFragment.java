@@ -3,10 +3,13 @@ package com.example.amr.onair.fragments;
 
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.GridLayoutManager;
@@ -22,8 +25,9 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import com.example.amr.onair.MyDividerItemDecoration;
+import com.example.amr.onair.Others.MyDividerItemDecoration;
 import com.example.amr.onair.R;
+import com.example.amr.onair.activities.SendMailGroupActivity;
 import com.example.amr.onair.adapters.ClientsAdapter;
 import com.example.amr.onair.models.Client;
 import com.google.firebase.database.DataSnapshot;
@@ -31,6 +35,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.gson.Gson;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -46,10 +51,11 @@ public class ClientsFragment extends Fragment {
     FirebaseDatabase database;
     RecyclerView recycler_view;
     RecyclerView.LayoutManager mLayoutManager;
-    List<Client> clientList;
+    List<Client> clientList, clientListFilter;
     ClientsAdapter clientsAdapter;
     ProgressDialog pdialog;
     EditText text_search;
+    Gson gson;
 
     public ClientsFragment() {
         // Required empty public constructor
@@ -79,6 +85,9 @@ public class ClientsFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_clients, container, false);
 
         setHasOptionsMenu(true);
+
+        clientListFilter = new ArrayList<>();
+        gson = new Gson();
 
         pdialog = new ProgressDialog(getActivity());
         pdialog.setIndeterminate(true);
@@ -160,16 +169,43 @@ public class ClientsFragment extends Fragment {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_settings:
-                StringBuilder stringBuilder = new StringBuilder();
+                clientListFilter.clear();
                 for (Client client : clientList) {
                     if (client.isSelected()) {
-                        if (stringBuilder.length() > 0)
-                            stringBuilder.append(", ");
-                        stringBuilder.append(client.getName());
+                        clientListFilter.add(client);
                     }
                 }
-                if (stringBuilder.length() > 0)
-                    Toast.makeText(getActivity(), stringBuilder.toString(), Toast.LENGTH_SHORT).show();
+                if (clientListFilter.size() > 1) {
+                    AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                    builder.setTitle("What do you want ?");
+                    builder.setItems(new CharSequence[]
+                                    {"Create Group Chat", "Send with email", "Send with SMS"},
+                            new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int which) {
+                                    // The 'which' argument contains the index position
+                                    // of the selected item
+                                    switch (which) {
+                                        case 0:
+                                            Toast.makeText(getActivity(), "clicked 1", Toast.LENGTH_SHORT).show();
+                                            break;
+                                        case 1:
+                                            String staffListFilterString = gson.toJson(clientListFilter);
+
+                                            Intent i = new Intent(getActivity(), SendMailGroupActivity.class);
+                                            Bundle b = new Bundle();
+                                            b.putString("ListFilterString", staffListFilterString);
+                                            b.putBoolean("staff", false);
+                                            i.putExtras(b);
+                                            startActivity(i);
+                                            break;
+                                        case 2:
+                                            Toast.makeText(getActivity(), "clicked 3", Toast.LENGTH_SHORT).show();
+                                            break;
+                                    }
+                                }
+                            });
+                    builder.create().show();
+                }
                 return true;
             default:
                 return super.onOptionsItemSelected(item);

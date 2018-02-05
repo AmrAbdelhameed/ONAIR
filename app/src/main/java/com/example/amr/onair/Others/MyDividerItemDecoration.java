@@ -1,4 +1,4 @@
-package com.example.amr.onair;
+package com.example.amr.onair.Others;
 
 import android.content.Context;
 import android.content.res.Resources;
@@ -10,10 +10,6 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.TypedValue;
 import android.view.View;
-
-/**
- * Created by ravi on 17/11/17.
- */
 
 public class MyDividerItemDecoration extends RecyclerView.ItemDecoration {
 

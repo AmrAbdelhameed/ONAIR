@@ -3,7 +3,9 @@ package com.example.amr.onair.activities;
 import android.app.DatePickerDialog;
 import android.app.ProgressDialog;
 import android.content.ContentResolver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
@@ -40,6 +42,7 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
+import com.google.gson.Gson;
 
 import java.io.IOException;
 import java.text.SimpleDateFormat;
@@ -67,6 +70,7 @@ public class RegisterActivity extends AppCompatActivity {
     DatePickerDialog.OnDateSetListener date;
     Calendar myCalendar;
     boolean imageCheck = false;
+    Gson gson;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -78,6 +82,7 @@ public class RegisterActivity extends AppCompatActivity {
 
         setTitle("Registration");
 
+        gson = new Gson();
         firebaseAuth = FirebaseAuth.getInstance();
         storageReference = FirebaseStorage.getInstance().getReference();
         mDatabase = FirebaseDatabase.getInstance().getReference();
@@ -240,6 +245,13 @@ public class RegisterActivity extends AppCompatActivity {
                                                 client.setImagreURL(imageurl);
 
                                                 mDatabase.child("users").child("clients").child(user.getUid()).setValue(client);
+
+                                                String clientString = gson.toJson(client);
+                                                SharedPreferences sharedPreferences = RegisterActivity.this.getSharedPreferences("sharedPreferencesName", Context.MODE_PRIVATE);
+                                                SharedPreferences.Editor editor = sharedPreferences.edit();
+                                                editor.putBoolean("staffCheck", false);
+                                                editor.putString("sampleObject", clientString);
+                                                editor.apply();
                                             } else {
                                                 Staff staff = new Staff();
 
@@ -255,6 +267,13 @@ public class RegisterActivity extends AppCompatActivity {
                                                 staff.setDepartment(DepartmenttypeString);
 
                                                 mDatabase.child("users").child("staff").child(user.getUid()).setValue(staff);
+
+                                                String staffString = gson.toJson(staff);
+                                                SharedPreferences sharedPreferences = RegisterActivity.this.getSharedPreferences("sharedPreferencesName", Context.MODE_PRIVATE);
+                                                SharedPreferences.Editor editor = sharedPreferences.edit();
+                                                editor.putBoolean("staffCheck", true);
+                                                editor.putString("sampleObject", staffString);
+                                                editor.apply();
                                             }
 
                                             Toast.makeText(RegisterActivity.this, "Registration successful", Toast.LENGTH_LONG).show();
@@ -317,6 +336,13 @@ public class RegisterActivity extends AppCompatActivity {
                         client.setImagreURL(imageurl);
 
                         mDatabase.child("users").child("clients").child(user.getUid()).setValue(client);
+
+                        String clientString = gson.toJson(client);
+                        SharedPreferences sharedPreferences = RegisterActivity.this.getSharedPreferences("sharedPreferencesName", Context.MODE_PRIVATE);
+                        SharedPreferences.Editor editor = sharedPreferences.edit();
+                        editor.putBoolean("staffCheck", false);
+                        editor.putString("sampleObject", clientString);
+                        editor.apply();
                     } else {
                         Staff staff = new Staff();
 
@@ -332,6 +358,13 @@ public class RegisterActivity extends AppCompatActivity {
                         staff.setDepartment(DepartmenttypeString);
 
                         mDatabase.child("users").child("staff").child(user.getUid()).setValue(staff);
+
+                        String staffString = gson.toJson(staff);
+                        SharedPreferences sharedPreferences = RegisterActivity.this.getSharedPreferences("sharedPreferencesName", Context.MODE_PRIVATE);
+                        SharedPreferences.Editor editor = sharedPreferences.edit();
+                        editor.putBoolean("staffCheck", true);
+                        editor.putString("sampleObject", staffString);
+                        editor.apply();
                     }
 
                     Toast.makeText(RegisterActivity.this, "Registration successful", Toast.LENGTH_LONG).show();

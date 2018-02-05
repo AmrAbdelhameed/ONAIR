@@ -3,10 +3,13 @@ package com.example.amr.onair.fragments;
 
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.GridLayoutManager;
@@ -25,8 +28,9 @@ import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.Toast;
 
-import com.example.amr.onair.MyDividerItemDecoration;
+import com.example.amr.onair.Others.MyDividerItemDecoration;
 import com.example.amr.onair.R;
+import com.example.amr.onair.activities.SendMailGroupActivity;
 import com.example.amr.onair.adapters.StaffAdapter;
 import com.example.amr.onair.models.Staff;
 import com.google.firebase.database.DataSnapshot;
@@ -34,6 +38,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.gson.Gson;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -48,6 +53,7 @@ public class StaffFragment extends Fragment {
     DatabaseReference databaseReference;
     FirebaseDatabase database;
     List<Staff> staffList;
+    List<Staff> staffListFilter;
     RecyclerView recycler_view;
     RecyclerView.LayoutManager mLayoutManager;
     StaffAdapter staffAdapter;
@@ -56,6 +62,7 @@ public class StaffFragment extends Fragment {
     ArrayList<String> DepartmenttypeArray;
     String DepartmenttypeString;
     boolean checkVisit = false;
+    Gson gson;
 
     public StaffFragment() {
         // Required empty public constructor
@@ -86,11 +93,15 @@ public class StaffFragment extends Fragment {
 
         setHasOptionsMenu(true);
 
+        gson = new Gson();
+
         pdialog = new ProgressDialog(getActivity());
         pdialog.setIndeterminate(true);
         pdialog.setCancelable(false);
         pdialog.setMessage("Loading. Please wait...");
         pdialog.show();
+
+        staffListFilter = new ArrayList<>();
 
         text_search = view.findViewById(R.id.text_search);
         recycler_view = view.findViewById(R.id.recycler_view);
@@ -206,16 +217,43 @@ public class StaffFragment extends Fragment {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_settings:
-                StringBuilder stringBuilder = new StringBuilder();
+                staffListFilter.clear();
                 for (Staff staff : staffList) {
                     if (staff.isSelected()) {
-                        if (stringBuilder.length() > 0)
-                            stringBuilder.append(", ");
-                        stringBuilder.append(staff.getName());
+                        staffListFilter.add(staff);
                     }
                 }
-                if (stringBuilder.length() > 0)
-                    Toast.makeText(getActivity(), stringBuilder.toString(), Toast.LENGTH_SHORT).show();
+                if (staffListFilter.size() > 1) {
+                    AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                    builder.setTitle("What do you want ?");
+                    builder.setItems(new CharSequence[]
+                                    {"Create Group Chat", "Send with email", "Send with SMS"},
+                            new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int which) {
+                                    // The 'which' argument contains the index position
+                                    // of the selected item
+                                    switch (which) {
+                                        case 0:
+                                            Toast.makeText(getActivity(), "clicked 1", Toast.LENGTH_SHORT).show();
+                                            break;
+                                        case 1:
+                                            String staffListFilterString = gson.toJson(staffListFilter);
+
+                                            Intent i = new Intent(getActivity(), SendMailGroupActivity.class);
+                                            Bundle b = new Bundle();
+                                            b.putString("ListFilterString", staffListFilterString);
+                                            b.putBoolean("staff", true);
+                                            i.putExtras(b);
+                                            startActivity(i);
+                                            break;
+                                        case 2:
+                                            Toast.makeText(getActivity(), "clicked 3", Toast.LENGTH_SHORT).show();
+                                            break;
+                                    }
+                                }
+                            });
+                    builder.create().show();
+                }
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
