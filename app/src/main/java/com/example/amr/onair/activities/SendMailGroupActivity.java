@@ -9,7 +9,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.amr.onair.R;
@@ -28,11 +27,10 @@ public class SendMailGroupActivity extends AppCompatActivity {
     List<Staff> staffList;
     List<Client> clientList;
     boolean _staff;
-    String ListFilterString, _toolbar = "\n";
+    String ListFilterString;
     EditText textSubject, textMessage;
     Button bTnSend;
-    List<String> stockList;
-    TextView textto;
+    List<String> stockListEmail;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,13 +40,12 @@ public class SendMailGroupActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
 
-        textto = findViewById(R.id.textto);
         textSubject = findViewById(R.id.textSubject);
         textMessage = findViewById(R.id.textMessage);
         bTnSend = findViewById(R.id.bTnSend);
 
         gson = new Gson();
-        stockList = new ArrayList<>();
+        stockListEmail = new ArrayList<>();
 
         Intent sentIntent = getIntent();
         Bundle sentBundle = sentIntent.getExtras();
@@ -61,31 +58,20 @@ public class SendMailGroupActivity extends AppCompatActivity {
             }.getType();
             staffList = gson.fromJson(ListFilterString, type);
 
-            for (int i = 0; i < staffList.size(); ++i) {
-                if (i == staffList.size() - 1)
-                    _toolbar += staffList.get(i).getEmail();
-                else
-                    _toolbar += staffList.get(i).getEmail() + ", ";
+            for (int i = 0; i < staffList.size(); ++i)
+                stockListEmail.add(staffList.get(i).getEmail());
 
-                stockList.add(staffList.get(i).getEmail());
-            }
         } else {
             Type type = new TypeToken<List<Client>>() {
             }.getType();
             clientList = gson.fromJson(ListFilterString, type);
 
-            for (int i = 0; i < clientList.size(); ++i) {
-                if (i == clientList.size() - 1)
-                    _toolbar += clientList.get(i).getEmail();
-                else
-                    _toolbar += clientList.get(i).getEmail() + ", ";
+            for (int i = 0; i < clientList.size(); ++i)
+                stockListEmail.add(clientList.get(i).getEmail());
 
-                stockList.add(clientList.get(i).getEmail());
-            }
         }
 
         setTitle("Send with email");
-        textto.setText("To" + _toolbar);
 
         bTnSend.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -95,7 +81,10 @@ public class SendMailGroupActivity extends AppCompatActivity {
                 } else if (textMessage.getText().toString().isEmpty()) {
                     textMessage.setError("Please Enter Message");
                 } else {
-                    sendEmail(stockList, textSubject.getText().toString(), textMessage.getText().toString());
+                    if (stockListEmail.size() > 0)
+                        sendEmail(stockListEmail, textSubject.getText().toString(), textMessage.getText().toString());
+                    else
+                        Toast.makeText(SendMailGroupActivity.this, "Not Available", Toast.LENGTH_SHORT).show();
                 }
             }
         });
@@ -126,7 +115,7 @@ public class SendMailGroupActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-//        getMenuInflater().inflate(R.menu.edit_members, menu);
+        getMenuInflater().inflate(R.menu.edit_members, menu);
         return true;
     }
 
@@ -139,10 +128,34 @@ public class SendMailGroupActivity extends AppCompatActivity {
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_edit) {
+            String stockListString = gson.toJson(stockListEmail);
+            Intent i2 = new Intent(SendMailGroupActivity.this, DeleteActivity.class);
+            Bundle b2 = new Bundle();
+            b2.putString("stockListString", stockListString);
+            i2.putExtras(b2);
+            startActivityForResult(i2, 1);
             return true;
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        // check if the request code is same as what is passed  here it is 2
+        if (requestCode == 1) {
+            if (resultCode == RESULT_OK) {
+                Bundle b = data.getExtras();
+                assert b != null;
+                String stockListString = b.getString("stockListString");
+
+                stockListEmail.clear();
+                Type type = new TypeToken<List<String>>() {
+                }.getType();
+                stockListEmail = gson.fromJson(stockListString, type);
+            }
+        }
     }
 
     @Override

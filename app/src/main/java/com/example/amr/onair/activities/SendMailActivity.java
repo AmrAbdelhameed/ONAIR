@@ -7,7 +7,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.amr.onair.R;
@@ -20,7 +19,6 @@ import java.util.List;
 public class SendMailActivity extends AppCompatActivity {
 
     EditText textSubject, textMessage;
-    TextView textto;
     Button bTnSend;
     boolean _staff;
     Staff staff;
@@ -37,7 +35,6 @@ public class SendMailActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayShowHomeEnabled(true);
 
         textSubject = findViewById(R.id.textSubject);
-        textto = findViewById(R.id.textto);
         textMessage = findViewById(R.id.textMessage);
         bTnSend = findViewById(R.id.bTnSend);
 
@@ -56,7 +53,6 @@ public class SendMailActivity extends AppCompatActivity {
             _Email = client.getEmail();
         }
         setTitle("Send with email");
-        textto.setText("To : " + _Email);
 
         stockList = new ArrayList<>();
         stockList.add(_Email);

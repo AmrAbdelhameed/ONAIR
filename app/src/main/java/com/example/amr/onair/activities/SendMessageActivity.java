@@ -7,7 +7,6 @@ import android.telephony.SmsManager;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.amr.onair.R;
@@ -17,7 +16,6 @@ import com.example.amr.onair.models.Staff;
 public class SendMessageActivity extends AppCompatActivity {
 
     EditText textMessage;
-    TextView textto;
     Button bTnSend;
     boolean _staff;
     Staff staff;
@@ -32,7 +30,6 @@ public class SendMessageActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
 
-        textto = findViewById(R.id.textto);
         textMessage = findViewById(R.id.textMessage);
         bTnSend = findViewById(R.id.bTnSend);
 
@@ -51,7 +48,6 @@ public class SendMessageActivity extends AppCompatActivity {
             _Phone = client.getPhone();
         }
         setTitle("Send with SMS");
-        textto.setText("To : " + _Phone);
 
         bTnSend.setOnClickListener(new View.OnClickListener() {
             @Override
