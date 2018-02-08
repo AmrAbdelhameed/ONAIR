@@ -14,6 +14,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import com.example.amr.onair.R;
+import com.example.amr.onair.fragments.AboutUsFragment;
 import com.example.amr.onair.fragments.HomeClientOrStaffFragment;
 import com.example.amr.onair.fragments.ProfileFragment;
 import com.example.amr.onair.models.Client;
@@ -40,9 +41,9 @@ public class MainClientOrStaffActivity extends AppCompatActivity
         setContentView(R.layout.activity_main_client_or_staff);
 
         toolbar = (Toolbar) findViewById(R.id.toolbar);
-        toolbar.setTitle("Home");
+        toolbar.setTitle("About us");
         setSupportActionBar(toolbar);
-        fragmentManager.beginTransaction().replace(R.id.content, new HomeClientOrStaffFragment()).commit();
+        fragmentManager.beginTransaction().replace(R.id.content, new AboutUsFragment()).commit();
 
         gson = new Gson();
         SharedPreferences sharedPreferences = getSharedPreferences("sharedPreferencesName", Context.MODE_PRIVATE);
@@ -126,6 +127,9 @@ public class MainClientOrStaffActivity extends AppCompatActivity
             ProfileFragment mDetailsFragment = new ProfileFragment();
             mDetailsFragment.setArguments(sentBundle);
             getSupportFragmentManager().beginTransaction().replace(R.id.content, mDetailsFragment, "").commit();
+        } else if (id == R.id.nav_about) {
+            toolbar.setTitle("About us");
+            fragmentManager.beginTransaction().replace(R.id.content, new AboutUsFragment()).commit();
         } else if (id == R.id.nav_logout) {
             FirebaseAuth.getInstance().signOut();
             startActivity(new Intent(MainClientOrStaffActivity.this, LoginActivity.class));
