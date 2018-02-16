@@ -6,8 +6,6 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
@@ -27,12 +25,12 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.example.amr.onair.Others.MyDividerItemDecoration;
+import com.example.amr.onair.Others.NetworkUtil;
 import com.example.amr.onair.R;
 import com.example.amr.onair.activities.SendMailGroupActivity;
 import com.example.amr.onair.activities.SendMessageGroupActivity;
 import com.example.amr.onair.adapters.ClientsAdapter;
 import com.example.amr.onair.models.Client;
-import com.example.amr.onair.models.Staff;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -67,23 +65,6 @@ public class ClientsFragment extends Fragment {
         // Required empty public constructor
     }
 
-    public static boolean hasInternetConnection(Context context) {
-        ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo wifiNetwork = cm.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
-        if (wifiNetwork != null && wifiNetwork.isConnected()) {
-            return true;
-        }
-        NetworkInfo mobileNetwork = cm.getNetworkInfo(ConnectivityManager.TYPE_MOBILE);
-        if (mobileNetwork != null && mobileNetwork.isConnected()) {
-            return true;
-        }
-        NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
-        if (activeNetwork != null && activeNetwork.isConnected()) {
-            return true;
-        }
-        return false;
-    }
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -105,7 +86,7 @@ public class ClientsFragment extends Fragment {
         text_search = view.findViewById(R.id.text_search);
         recycler_view = view.findViewById(R.id.recycler_view);
 
-        if (!hasInternetConnection(getActivity())) {
+        if (!NetworkUtil.isConnected(getActivity())) {
             Toast.makeText(getActivity(), "Connection Failed", Toast.LENGTH_LONG).show();
 
             SharedPreferences sharedPreferences = getActivity().getSharedPreferences("sharedPreferencesName", Context.MODE_PRIVATE);

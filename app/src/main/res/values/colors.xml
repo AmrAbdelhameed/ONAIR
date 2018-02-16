@@ -9,4 +9,5 @@
     <color name="colorRed">#FF0000</color>
     <color name="colorGreen">#2E7D32</color>
     <color name="colorOrange">#FF5722</color>
+    <color name="grey_200">#EEEEEE</color>
 </resources>
