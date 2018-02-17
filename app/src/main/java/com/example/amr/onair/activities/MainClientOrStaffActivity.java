@@ -114,7 +114,16 @@ public class MainClientOrStaffActivity extends AppCompatActivity
 
         if (id == R.id.nav_home) {
             toolbar.setTitle("Home");
-            fragmentManager.beginTransaction().replace(R.id.content, new HomeClientOrStaffFragment()).commit();
+            Bundle sentBundle = new Bundle();
+            sentBundle.putBoolean("staff", staffCheck);
+            if (staffCheck)
+                sentBundle.putSerializable("sampleObject", staff);
+            else
+                sentBundle.putSerializable("sampleObject", client);
+            HomeClientOrStaffFragment homeClientOrStaffFragment = new HomeClientOrStaffFragment();
+            homeClientOrStaffFragment.setArguments(sentBundle);
+            getSupportFragmentManager().beginTransaction().replace(R.id.content, homeClientOrStaffFragment, "").commit();
+//            fragmentManager.beginTransaction().replace(R.id.content, new HomeClientOrStaffFragment()).commit();
         } else if (id == R.id.nav_profile) {
             toolbar.setTitle(Name + "'s profile");
 //            fragmentManager.beginTransaction().replace(R.id.content, new ProfileFragment()).commit();

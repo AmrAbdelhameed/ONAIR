@@ -11,7 +11,7 @@
         android:layout_marginLeft="@dimen/_8dp"
         android:layout_marginStart="@dimen/_8dp"
         android:src="@drawable/ic_person_black_48dp"
-        android:tint="@color/colorPrimary"
+        android:tint="@color/colorBlack"
         app:layout_constraintBottom_toBottomOf="@+id/textContentUser"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/textContentUser" />
@@ -26,7 +26,7 @@
         android:layout_marginTop="@dimen/_8dp"
         android:background="@drawable/rounded_corner2"
         android:padding="@dimen/_10dp"
-        android:text="Amr Abdelhameed"
+        android:text=""
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:textColor="@color/colorBlack"
         android:textSize="@dimen/_16sp"

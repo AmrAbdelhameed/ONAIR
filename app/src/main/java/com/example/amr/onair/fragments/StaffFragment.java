@@ -236,7 +236,7 @@ public class StaffFragment extends Fragment {
                     AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
                     builder.setTitle("What do you want ?");
                     builder.setItems(new CharSequence[]
-                                    {"Create Group Chat", "Send with email", "Send with SMS"},
+                                    {"Create Group ChatIndividual", "Send with email", "Send with SMS"},
                             new DialogInterface.OnClickListener() {
                                 public void onClick(DialogInterface dialog, int which) {
                                     String staffListFilterString = gson.toJson(staffListFilter);
@@ -263,7 +263,8 @@ public class StaffFragment extends Fragment {
                                 }
                             });
                     builder.create().show();
-                }
+                } else
+                    Toast.makeText(getActivity(), "Add at least two people to create group", Toast.LENGTH_SHORT).show();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
