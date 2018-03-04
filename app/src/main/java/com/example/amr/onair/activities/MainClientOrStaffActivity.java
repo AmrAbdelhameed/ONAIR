@@ -12,7 +12,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Toast;
 
+import com.example.amr.onair.Others.NetworkUtil;
 import com.example.amr.onair.R;
 import com.example.amr.onair.fragments.AboutUsFragment;
 import com.example.amr.onair.fragments.HomeClientOrStaffFragment;
@@ -44,6 +46,10 @@ public class MainClientOrStaffActivity extends AppCompatActivity
         toolbar.setTitle("About us");
         setSupportActionBar(toolbar);
         fragmentManager.beginTransaction().replace(R.id.content, new AboutUsFragment()).commit();
+
+        if (!NetworkUtil.isConnected(MainClientOrStaffActivity.this)) {
+            Toast.makeText(MainClientOrStaffActivity.this, "Connection Failed", Toast.LENGTH_LONG).show();
+        }
 
         gson = new Gson();
         SharedPreferences sharedPreferences = getSharedPreferences("sharedPreferencesName", Context.MODE_PRIVATE);

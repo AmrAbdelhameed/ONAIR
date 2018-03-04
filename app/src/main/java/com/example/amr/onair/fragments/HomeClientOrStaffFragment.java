@@ -130,19 +130,20 @@ public class HomeClientOrStaffFragment extends Fragment {
             SharedPreferences sharedPreferences = getActivity().getSharedPreferences("sharedPreferencesName", Context.MODE_PRIVATE);
             CacheDataChat = sharedPreferences.getString("CacheDataChat", "");
 
-            Type type = new TypeToken<List<ChatIndividual>>() {
-            }.getType();
-            chatIndividuals = gson.fromJson(CacheDataChat, type);
+            if (!CacheDataChat.isEmpty()) {
+                Type type = new TypeToken<List<ChatIndividual>>() {
+                }.getType();
+                chatIndividuals = gson.fromJson(CacheDataChat, type);
 
-            chatAdapter = new ChatAdapter(getActivity(), chatIndividuals, _id);
-            mLayoutManager = new GridLayoutManager(getActivity(), 1);
-            mLayoutManager.scrollToPosition(chatIndividuals.size() - 1);
-            recycler_view.setLayoutManager(mLayoutManager);
+                chatAdapter = new ChatAdapter(getActivity(), chatIndividuals, _id);
+                mLayoutManager = new GridLayoutManager(getActivity(), 1);
+                mLayoutManager.scrollToPosition(chatIndividuals.size() - 1);
+                recycler_view.setLayoutManager(mLayoutManager);
 //                recycler_view.addItemDecoration(new MyDividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL, 0));
-            recycler_view.setHasFixedSize(true);
-            recycler_view.setItemAnimator(new DefaultItemAnimator());
-            recycler_view.setAdapter(chatAdapter);
-
+                recycler_view.setHasFixedSize(true);
+                recycler_view.setItemAnimator(new DefaultItemAnimator());
+                recycler_view.setAdapter(chatAdapter);
+            }
             pdialog.dismiss();
         } else {
             database = FirebaseDatabase.getInstance();

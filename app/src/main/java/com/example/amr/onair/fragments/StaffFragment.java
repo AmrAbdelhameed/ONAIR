@@ -95,7 +95,7 @@ public class StaffFragment extends Fragment {
         recycler_view = view.findViewById(R.id.recycler_view);
 
         if (!NetworkUtil.isConnected(getActivity())) {
-            Toast.makeText(getActivity(), "Connection Failed", Toast.LENGTH_LONG).show();
+//            Toast.makeText(getActivity(), "Connection Failed", Toast.LENGTH_LONG).show();
 
             SharedPreferences sharedPreferences = getActivity().getSharedPreferences("sharedPreferencesName", Context.MODE_PRIVATE);
             CacheDataStaff = sharedPreferences.getString("CacheDataStaff", "");

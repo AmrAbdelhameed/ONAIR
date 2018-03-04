@@ -8,9 +8,10 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Toast;
 
+import com.example.amr.onair.Others.NetworkUtil;
 import com.example.amr.onair.R;
 import com.example.amr.onair.fragments.ClientsFragment;
 import com.example.amr.onair.fragments.GroupsFragment;
@@ -32,6 +33,9 @@ public class MainActivity extends AppCompatActivity
         setSupportActionBar(toolbar);
         fragmentManager.beginTransaction().replace(R.id.content, new StaffFragment()).commit();
 
+        if (!NetworkUtil.isConnected(MainActivity.this)) {
+            Toast.makeText(MainActivity.this, "Connection Failed", Toast.LENGTH_LONG).show();
+        }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
